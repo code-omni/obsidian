@@ -1,4 +1,4 @@
-# Work Order v3: Obsidian PKM Vault
+# Obsidian PKM Vault
 A ightweight Obsidian vault for **frictionless capture → synthesis → knowledge development → action**. It combines Steph Ango–style Quick Notes, self-indexing Daily notes, Zotero-backed References, Common (smart/commonplace) notes, and Projects with Bets. Core plugins only, except Zotero Integration.
 
 > **Capture without classification; classify and synthesize when useful.**
