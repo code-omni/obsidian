@@ -1,0 +1,148 @@
+# Views embedded on Home.md. Each view is embedded by name: ![[Home.base#View name]]
+formulas:
+  note: 'file.asLink(if(aliases, list(aliases)[0], file.name))'
+  captured: 'file.name.slice(0, 10)'
+  days_left: 'if(timeframe, ((date(timeframe) - today()) / 86400000).round(0), "")'
+properties:
+  formula.note:
+    displayName: Note
+  formula.captured:
+    displayName: Captured
+  formula.days_left:
+    displayName: Days left
+  file.tags:
+    displayName: Tags
+  file.mtime:
+    displayName: Last edited
+views:
+  - type: table
+    name: This week
+    filters:
+      and:
+        - file.inFolder("Daily")
+        - 'type == "quick"'
+        - 'file.ctime >= today() - "7d"'
+    order:
+      - formula.captured
+      - formula.note
+      - file.tags
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Flagged to promote
+    filters:
+      and:
+        - 'type == "quick"'
+        - file.hasTag("promote")
+    order:
+      - formula.captured
+      - formula.note
+      - file.tags
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Needs a title or tag
+    filters:
+      and:
+        - file.inFolder("Daily")
+        - 'type == "quick"'
+        - or:
+            - '!aliases'
+            - 'list(aliases).filter(value != null && value != "").length == 0'
+            - 'file.tags.length == 0'
+    order:
+      - formula.captured
+      - formula.note
+      - file.tags
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Common in progress
+    filters:
+      and:
+        - file.inFolder("Common")
+        - 'maturity != "stable"'
+    order:
+      - file.name
+      - maturity
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+  - type: table
+    name: Active projects
+    filters:
+      and:
+        - file.inFolder("Projects")
+        - 'status == "active"'
+    order:
+      - file.name
+      - bet
+      - review
+      - timeframe
+      - formula.days_left
+    sort:
+      - property: review
+        direction: ASC
+  - type: table
+    name: Bets due for review
+    filters:
+      and:
+        - file.inFolder("Projects")
+        - 'bet == true'
+        - 'status == "active"'
+        - or:
+            - 'review && date(review) <= today()'
+            - 'timeframe && date(timeframe) <= today()'
+    order:
+      - file.name
+      - hypothesis
+      - review
+      - timeframe
+      - kill_criteria
+    sort:
+      - property: review
+        direction: ASC
+  - type: table
+    name: Candidates
+    filters:
+      and:
+        - file.inFolder("Projects")
+        - 'status == "candidate"'
+    order:
+      - file.name
+      - desired_outcome
+      - file.ctime
+    sort:
+      - property: file.ctime
+        direction: DESC
+  - type: table
+    name: Recent references
+    limit: 10
+    filters:
+      and:
+        - file.inFolder("References")
+    order:
+      - file.name
+      - title
+      - authors
+      - file.mtime
+    sort:
+      - property: file.mtime
+        direction: DESC
+  - type: table
+    name: Project archive
+    filters:
+      and:
+        - file.inFolder("Projects")
+        - 'status == "archived"'
+    order:
+      - file.name
+      - outcome
+      - timeframe
+    sort:
+      - property: file.mtime
+        direction: DESC

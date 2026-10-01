@@ -1,0 +1,45 @@
+# Embedded in every Daily note. `this` = the Daily note embedding it,
+# so this.file.name is that day's date (YYYY-MM-DD).
+filters:
+  and:
+    - file.inFolder("Daily")
+    - 'type == "quick"'
+formulas:
+  time: 'file.name.slice(11, 13) + ":" + file.name.slice(13, 15)'
+  note: 'file.asLink(if(aliases, list(aliases)[0], file.name))'
+  captured: 'file.name.slice(0, 10)'
+properties:
+  formula.time:
+    displayName: Time
+  formula.note:
+    displayName: Note
+  formula.captured:
+    displayName: Captured
+  file.tags:
+    displayName: Tags
+views:
+  - type: table
+    name: Captured today
+    filters:
+      and:
+        - file.name.startsWith(this.file.name)
+    order:
+      - formula.time
+      - formula.note
+      - file.tags
+    sort:
+      - property: file.name
+        direction: ASC
+  - type: table
+    name: Continued today
+    filters:
+      and:
+        - '!file.name.startsWith(this.file.name)'
+        - 'file.mtime.format("YYYY-MM-DD") == this.file.name'
+    order:
+      - formula.captured
+      - formula.note
+      - file.tags
+    sort:
+      - property: file.mtime
+        direction: DESC

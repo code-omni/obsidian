@@ -1,0 +1,41 @@
+# Embedded in every Common note. `this` = the Common note embedding it.
+filters:
+  and:
+    - file.path != this.file.path
+    - '!file.inFolder("Templates")'
+formulas:
+  note: 'file.asLink(if(aliases, list(aliases)[0], file.name))'
+  kind: 'type'
+properties:
+  formula.note:
+    displayName: Note
+  formula.kind:
+    displayName: Type
+  file.tags:
+    displayName: Tags
+views:
+  - type: table
+    name: Linked here
+    filters:
+      and:
+        - file.hasLink(this.file)
+    order:
+      - formula.note
+      - formula.kind
+      - file.tags
+    sort:
+      - property: file.name
+        direction: DESC
+  - type: table
+    name: Gathered by tag
+    filters:
+      and:
+        - '!file.hasLink(this.file)'
+        - 'list(this.gathers).filter(value != null && value != "").filter(file.hasTag(value)).length > 0'
+    order:
+      - formula.note
+      - formula.kind
+      - file.tags
+    sort:
+      - property: file.name
+        direction: DESC
